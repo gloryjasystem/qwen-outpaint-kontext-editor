@@ -5,6 +5,22 @@
     "https://github.com/lquesada/ComfyUI-Inpaint-CropAndStitch": {
       "hash": "main",
       "disabled": false
+    },
+    "https://github.com/city96/ComfyUI-GGUF": {
+      "hash": "main",
+      "disabled": false
+    },
+    "https://github.com/TheLustriVA/ComfyUI-Image-Size-Tools": {
+      "hash": "main",
+      "disabled": false
+    },
+    "https://github.com/gseth/ControlAltAI-Nodes": {
+      "hash": "main",
+      "disabled": false
+    },
+    "https://github.com/kael558/ComfyUI-GGUF-FantasyTalking": {
+      "hash": "main",
+      "disabled": false
     }
   },
   "file_custom_nodes": []
