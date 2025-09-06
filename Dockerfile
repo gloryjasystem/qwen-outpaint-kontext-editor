@@ -37,13 +37,13 @@ WORKDIR /comfyui
 RUN pip install runpod requests
 
 # Support for the network volume
-ADD src/extra_model_paths.yaml ./
+ADD src/extra_model_paths.yaml ./ 
 
 # Go back to the root
-WORKDIR /
+WORKDIR / 
 
 # Add scripts
-ADD src/start.sh src/restore_snapshot.sh src/rp_handler.py test_input.json ./
+ADD src/start.sh src/restore_snapshot.sh src/rp_handler.py test_input.json ./ 
 RUN chmod +x /start.sh /restore_snapshot.sh
 
 # Optionally copy the snapshot file
@@ -58,6 +58,7 @@ CMD ["/start.sh"]
 # Stage 2: Download models
 FROM base as downloader
 
+# Declare the ARG for the token
 ARG HUGGINGFACE_ACCESS_TOKEN
 ARG MODEL_TYPE=flux1-dev
 
@@ -67,11 +68,11 @@ WORKDIR /comfyui
 # Create necessary directories
 RUN mkdir -p models/checkpoints models/vae models/unet models/clip
 
-# Download flux1-dev model and its components
-RUN wget --header="Authorization: Bearer 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" -O models/unet/flux1-dev.safetensors https://huggingface.co/black-forest-labs/FLUX.1-dev/resolve/main/flux1-dev.safetensors && \
+# Download flux1-dev model and its components using the token passed through ARG
+RUN wget --header="Authorization: Bearer ${HUGGINGFACE_ACCESS_TOKEN}" -O models/unet/flux1-dev.safetensors https://huggingface.co/black-forest-labs/FLUX.1-dev/resolve/main/flux1-dev.safetensors && \
     wget -O models/clip/clip_l.safetensors https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/clip_l.safetensors && \
     wget -O models/clip/t5xxl_fp8_e4m3fn.safetensors https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/t5xxl_fp8_e4m3fn.safetensors && \
-    wget --header="Authorization: Bearer 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" -O models/vae/ae.safetensors https://huggingface.co/black-forest-labs/FLUX.1-dev/resolve/main/ae.safetensors
+    wget --header="Authorization: Bearer ${HUGGINGFACE_ACCESS_TOKEN}" -O models/vae/ae.safetensors https://huggingface.co/black-forest-labs/FLUX.1-dev/resolve/main/ae.safetensors;
 
     
 # Stage 3: Final image
