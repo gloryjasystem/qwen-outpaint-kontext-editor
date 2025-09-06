@@ -62,6 +62,8 @@ FROM base as downloader
 ARG HUGGINGFACE_ACCESS_TOKEN
 ARG MODEL_TYPE=flux1-dev
 
+RUN echo "Hugging Face Token: ${HUGGINGFACE_ACCESS_TOKEN}"
+
 # Change working directory to ComfyUI
 WORKDIR /comfyui
 
