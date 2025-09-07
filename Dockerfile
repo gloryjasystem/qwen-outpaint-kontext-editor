@@ -37,7 +37,7 @@ WORKDIR /comfyui
 RUN pip install runpod requests
 
 # Support for the network volume
-ADD src/extra_model_paths.yaml ./
+ADD src/extra_model_paths.yaml ./ 
 
 # Go back to the root
 WORKDIR /
@@ -55,12 +55,30 @@ RUN /restore_snapshot.sh
 # Start container
 CMD ["/start.sh"]
 
-# Stage 2: Final image (No models are downloaded)
+# Stage 2: Download models
+FROM base AS downloader
+
+ARG HUGGINGFACE_ACCESS_TOKEN
+ARG MODEL_TYPE=flux1-dev
+
+# Change working directory to ComfyUI
+WORKDIR /comfyui
+
+# Create necessary directories
+RUN mkdir -p models/checkpoints models/vae models/unet models/clip
+
+# Download flux1-dev model and its components
+RUN wget --header="Authorization: Bearer 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" -O models/unet/flux1-dev.safetensors https://huggingface.co/black-forest-labs/FLUX.1-dev/resolve/main/flux1-dev.safetensors && \
+    wget -O models/clip/clip_l.safetensors https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/clip_l.safetensors && \
+    wget -O models/clip/t5xxl_fp8_e4m3fn.safetensors https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/t5xxl_fp8_e4m3fn.safetensors && \
+    wget --header="Authorization: Bearer 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" -O models/vae/ae.safetensors https://huggingface.co/black-forest-labs/FLUX.1-dev/resolve/main/ae.safetensors
+
+    
+# Stage 3: Final image
 FROM base AS final
 
-# Copy models from stage 1 (if you need any pre-existing models added)
-# Copy models from stage 1 to the final image (if they are present in /comfyui/models)
-COPY --from=base /comfyui/models /comfyui/models
+# Copy models from stage 2 to the final image
+COPY --from=downloader /comfyui/models /comfyui/models
 
 # Start container
 CMD ["/start.sh"]
