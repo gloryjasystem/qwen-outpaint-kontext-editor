@@ -59,6 +59,7 @@ CMD ["/start.sh"]
 FROM base AS downloader
 
 ARG HUGGINGFACE_ACCESS_TOKEN
+ENV HUGGINGFACE_ACCESS_TOKEN=${HUGGINGFACE_ACCESS_TOKEN}
 ARG MODEL_TYPE=flux1-dev
 
 # Change working directory to ComfyUI
